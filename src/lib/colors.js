@@ -1,1 +1,1 @@
-export const colors = ['tomato', 'hotpink', 'pink', 'lightgreen', 'aqua', 'cornflowerblue', 'mediumpurple'];
+export const colors = ['tomato', 'hotpink', 'pink', 'aqua', 'mediumpurple'];

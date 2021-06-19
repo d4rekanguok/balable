@@ -1,15 +1,12 @@
 <script>
 	import { getContext } from 'svelte';
 	import { colors } from './colors';
+	import { getNote } from './get-note';
 	export let maxValue = 7;
 	export let colorId = 0;
 	export let data;
 
 	const { synth } = getContext('app');
-
-	const getNote = (value = 0) => {
-		return ['C', 'D', 'E', 'F', 'G', 'A', 'B'][value - 1];
-	};
 
 	const handleClick = () => {
 		data.update((store) => {

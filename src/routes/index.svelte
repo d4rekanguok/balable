@@ -3,10 +3,11 @@
 </script>
 
 <script>
-	import { writable } from 'svelte/store';
+	import { writable, derived } from 'svelte/store';
 	import { setContext } from 'svelte';
 	import * as Tone from 'tone';
 
+	import { getNote } from '$lib/get-note';
 	import Cell from '$lib/Cell.svelte';
 	import Palette from '$lib/Palette.svelte';
 
@@ -15,7 +16,54 @@
 	const data = Array.from({ length: size }, () => writable({ value: 0, colorId: 0 }));
 
 	const synth = new Tone.Synth().toDestination();
+
+	const wah = new Tone.AutoWah(50, 6, -30).toDestination();
+	wah.Q.value = 6;
+	const wahSynth = new Tone.Synth().connect(wah);
+	const instruments = [
+		synth,
+		wahSynth,
+		new Tone.AMSynth().toDestination(),
+		new Tone.MembraneSynth().toDestination(),
+		new Tone.FMSynth().toDestination()
+	];
+
 	setContext('app', { synth });
+
+	const noteSeries = derived([...data], (items) => {
+		return items.map((item) => {
+			const note = getNote(item.value);
+			const effectId = item.colorId;
+			return {
+				effectId,
+				note: note ? `${note}4` : 'C0'
+			};
+		});
+	});
+
+	$: notes = $noteSeries;
+	let isPlaying = false;
+
+	const handlePlay = () => {
+		const loop = new Tone.Loop((time) => {
+			notes.forEach(({ note, effectId }, i) => {
+				instruments[effectId].triggerAttackRelease(note, 0.25, time + i * 0.25);
+			});
+		}, 0.25 * notes.length).start(0);
+		Tone.Transport.start();
+		isPlaying = true;
+
+		const stop = () => {
+			if (isPlaying) {
+				loop.dispose();
+				Tone.Transport.stop();
+			}
+
+			window.removeEventListener('mousedown', stop, true);
+		};
+
+		window.addEventListener('mousedown', stop, true);
+	};
 </script>
 
 <svelte:head>
@@ -25,6 +73,9 @@
 <main>
 	<div class="palette-wrapper">
 		<Palette {colorId} />
+	</div>
+	<div class="play-wrapper">
+		<button class="play" on:click={handlePlay} disabled={isPlaying}>⟳</button>
 	</div>
 	<div class="container">
 		{#each data as item}
@@ -63,6 +114,26 @@
 
 	.palette-wrapper {
 		position: absolute;
-		left: 1rem;
+		left: 2rem;
+	}
+
+	.play-wrapper {
+		position: absolute;
+		right: 2rem;
+	}
+
+	.play {
+		position: relative;
+		width: 4rem;
+		height: 4rem;
+		color: white;
+		background-color: tomato;
+		font-size: 2rem;
+		border: none;
+		border-radius: 100%;
+	}
+
+	.play[disabled] {
+		background-color: gray;
 	}
 </style>
