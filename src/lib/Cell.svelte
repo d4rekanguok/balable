@@ -8,7 +8,7 @@
 	const { synth } = getContext('app');
 
 	const getNote = (value = 0) => {
-		return ['C', 'D', 'E', 'F', 'G', 'A', 'B'][value];
+		return ['C', 'D', 'E', 'F', 'G', 'A', 'B'][value - 1];
 	};
 
 	const handleClick = () => {
