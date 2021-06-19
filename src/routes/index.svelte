@@ -1,12 +1,21 @@
+<script context="module">
+	export const ssr = false;
+</script>
+
 <script>
 	import { writable } from 'svelte/store';
+	import { setContext } from 'svelte';
+	import * as Tone from 'tone';
+
 	import Cell from '$lib/Cell.svelte';
 	import Palette from '$lib/Palette.svelte';
 
 	let size = 12;
-
 	const colorId = writable(0);
 	const data = Array.from({ length: size }, () => writable({ value: 0, colorId: 0 }));
+
+	const synth = new Tone.Synth().toDestination();
+	setContext('app', { synth });
 </script>
 
 <svelte:head>

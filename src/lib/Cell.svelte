@@ -1,13 +1,27 @@
 <script>
+	import { getContext } from 'svelte';
 	import { colors } from './colors';
 	export let maxValue = 7;
 	export let colorId = 0;
 	export let data;
 
+	const { synth } = getContext('app');
+
+	const getNote = (value = 0) => {
+		return ['C', 'D', 'E', 'F', 'G', 'A', 'B'][value];
+	};
+
 	const handleClick = () => {
 		data.update((store) => {
-			store.value = (store.value + 1) % (maxValue + 1);
+			const value = (store.value + 1) % (maxValue + 1);
+
+			if (value > 0) {
+				synth.triggerAttackRelease(`${getNote(value)}4`, '8n');
+			}
+
+			store.value = value;
 			store.colorId = colorId;
+
 			return store;
 		});
 	};
