@@ -1,0 +1,1 @@
+export const colors = ['tomato', 'pink', 'lightgreen', 'aqua', 'cornflowerblue'];
