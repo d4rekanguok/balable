@@ -15,6 +15,9 @@
 	const instruments = getInstruments();
 
 	let size = 12;
+	let ref;
+	let isFullscreen = false;
+
 	const colorId = writable(0);
 	const data = Array.from({ length: size }, () => writable({ value: 0, colorId: 0 }));
 
@@ -37,7 +40,7 @@
 	const handlePlay = () => {
 		const loop = new Tone.Loop((time) => {
 			notes.forEach(({ note, effectId }, i) => {
-				instruments[effectId].triggerAttackRelease(note, 0.25, time + i * 0.25);
+				instruments[effectId].play([note, 0.25, time + i * 0.25], () => console.log(note));
 			});
 		}, 0.25 * notes.length).start(0);
 		Tone.Transport.start();
@@ -55,18 +58,31 @@
 
 		window.addEventListener('mousedown', stop, true);
 	};
+
+	const handleFullscreen = () => {
+		if (isFullscreen) {
+			document.exitFullscreen();
+			isFullscreen = false;
+		} else {
+			ref.requestFullscreen();
+			isFullscreen = true;
+		}
+	};
 </script>
 
 <svelte:head>
 	<title>Home</title>
 </svelte:head>
 
-<main>
+<main bind:this={ref}>
 	<div class="palette-wrapper">
 		<Palette {colorId} />
 	</div>
 	<div class="play-wrapper">
 		<button class="play" on:click={handlePlay} disabled={isPlaying}>⟳</button>
+	</div>
+	<div class="fullscreen-wrapper">
+		<button class="fullscreen" on:click={handleFullscreen}>FS</button>
 	</div>
 	<div class="container">
 		{#each data as item}
@@ -126,5 +142,23 @@
 
 	.play[disabled] {
 		background-color: gray;
+	}
+
+	.fullscreen-wrapper {
+		position: absolute;
+		right: 2rem;
+		bottom: 2rem;
+	}
+
+	.fullscreen {
+		width: 3rem;
+		height: 3rem;
+		border: none;
+		background-color: transparent;
+		border-radius: 4px;
+		border: 2px solid mediumpurple;
+		color: mediumpurple;
+		font-family: sans-serif;
+		font-weight: bold;
 	}
 </style>

@@ -38,7 +38,7 @@
 			const value = (store.value + 1) % (maxValue + 1);
 
 			if (value > 0) {
-				instruments[colorId].triggerAttackRelease(`${getNote(value)}4`, '8n');
+				instruments[colorId].play([`${getNote(value)}4`, '8n']);
 			}
 
 			store.value = value;
