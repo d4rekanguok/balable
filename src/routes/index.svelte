@@ -36,6 +36,8 @@
 		});
 	});
 
+	// little 'hack' to extract the derived value
+	// out of noteSeries without having to subscribe
 	$: notes = $noteSeries;
 
 	const handlePlay = () => {
@@ -91,7 +93,8 @@
 		<button class="play" on:click={handlePlay} disabled={isPlaying}>⟳</button>
 	</div>
 	<div class="fullscreen-wrapper">
-		<button class="fullscreen" on:click={handleFullscreen}>FS</button>
+		<button class="fullscreen" data-fullscreen={isFullscreen} on:click={handleFullscreen}>FS</button
+		>
 	</div>
 	<div class="container">
 		{#each data as item, i}
@@ -169,5 +172,12 @@
 		color: mediumpurple;
 		font-family: sans-serif;
 		font-weight: bold;
+	}
+
+	.fullscreen[data-fullscreen='true'] {
+		background-color: mediumpurple;
+		border-radius: 4px;
+		border-color: transparent;
+		color: white;
 	}
 </style>

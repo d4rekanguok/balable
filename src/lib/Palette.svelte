@@ -42,9 +42,10 @@
 		border: none;
 		border-radius: 1rem;
 		background-color: var(--color);
+		transition: transform 0.3s ease;
 	}
 
 	.color-btn[data-selected='true'] {
-		border: 10px solid white;
+		transform: translateX(1rem);
 	}
 </style>
