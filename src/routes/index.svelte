@@ -17,6 +17,8 @@
 	let size = 12;
 	let ref;
 	let isFullscreen = false;
+	let isPlaying = false;
+	let currentlyPlaying = -1;
 
 	const colorId = writable(0);
 	const data = Array.from({ length: size }, () => writable({ value: 0, colorId: 0 }));
@@ -29,18 +31,23 @@
 			const effectId = item.colorId;
 			return {
 				effectId,
-				note: note ? `${note}4` : 'C0'
+				note: note ? `${note}4` : 'C1'
 			};
 		});
 	});
 
 	$: notes = $noteSeries;
-	let isPlaying = false;
 
 	const handlePlay = () => {
+		const now = Tone.Transport.now();
+		const loopAnimate = new Tone.Loop((time) => {
+			const id = Math.round(((time - now) / 0.25) % data.length);
+			currentlyPlaying = id;
+		}, 0.25).start(0);
+
 		const loop = new Tone.Loop((time) => {
 			notes.forEach(({ note, effectId }, i) => {
-				instruments[effectId].play([note, 0.25, time + i * 0.25], () => console.log(note));
+				instruments[effectId].play(note, 0.25, time + i * 0.25);
 			});
 		}, 0.25 * notes.length).start(0);
 		Tone.Transport.start();
@@ -48,9 +55,11 @@
 
 		const stop = () => {
 			if (isPlaying) {
-				loop.dispose();
 				Tone.Transport.stop();
+				loop.dispose();
+				loopAnimate.dispose();
 				isPlaying = false;
+				currentlyPlaying = -1;
 			}
 
 			window.removeEventListener('mousedown', stop, true);
@@ -85,9 +94,9 @@
 		<button class="fullscreen" on:click={handleFullscreen}>FS</button>
 	</div>
 	<div class="container">
-		{#each data as item}
+		{#each data as item, i}
 			<div class="cell-wrapper">
-				<Cell colorId={$colorId} data={item} />
+				<Cell colorId={$colorId} data={item} currentlyPlaying={currentlyPlaying === i} />
 			</div>
 		{/each}
 	</div>

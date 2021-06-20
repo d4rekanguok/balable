@@ -5,6 +5,7 @@
 	import { getNote } from './get-note';
 	export let maxValue = 7;
 	export let colorId = 0;
+	export let currentlyPlaying = false;
 	export let data;
 
 	/** @type {'playing' | 'idle'} */
@@ -30,6 +31,10 @@
 		}
 	};
 
+	$: if (currentlyPlaying) {
+		pressed('playing');
+	}
+
 	const { instruments } = getContext('app');
 
 	const handleClick = () => {
@@ -38,7 +43,7 @@
 			const value = (store.value + 1) % (maxValue + 1);
 
 			if (value > 0) {
-				instruments[colorId].play([`${getNote(value)}4`, '8n']);
+				instruments[colorId].play(`${getNote(value)}4`, '8n');
 			}
 
 			store.value = value;

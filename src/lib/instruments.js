@@ -2,9 +2,8 @@ import * as Tone from 'tone';
 
 const wrapInstrument = (instrument) => {
   return {
-    play: (args, cb) => {
+    play: (...args) => {
       instrument.triggerAttackRelease(...args);
-      if (cb) cb()
     }
   }
 }
