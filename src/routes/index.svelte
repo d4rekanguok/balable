@@ -57,6 +57,7 @@
 			if (isPlaying) {
 				loop.dispose();
 				Tone.Transport.stop();
+				isPlaying = false;
 			}
 
 			window.removeEventListener('mousedown', stop, true);
