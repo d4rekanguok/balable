@@ -1,14 +1,39 @@
 <script>
 	import { getContext } from 'svelte';
+	import { spring } from 'svelte/motion';
 	import { colors } from './colors';
 	import { getNote } from './get-note';
 	export let maxValue = 7;
 	export let colorId = 0;
 	export let data;
 
+	/** @type {'playing' | 'idle'} */
+	let state = 'idle';
+
+	const scale = spring(1);
+	const pressed = (nextState) => {
+		if (state === nextState) {
+			return;
+		}
+
+		if (nextState === 'playing') {
+			scale.set(0.9);
+			state = 'playing';
+			setTimeout(() => {
+				pressed('idle');
+			}, 300);
+		}
+
+		if (nextState === 'idle') {
+			scale.set(1);
+			state = 'idle';
+		}
+	};
+
 	const { instruments } = getContext('app');
 
 	const handleClick = () => {
+		pressed('playing');
 		data.update((store) => {
 			const value = (store.value + 1) % (maxValue + 1);
 
@@ -45,6 +70,7 @@
 	style="
 		--color: {color};
 		border-radius: {br};
+		transform: scale({$scale});
 ">{$data.value}</button
 >
 

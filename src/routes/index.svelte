@@ -10,7 +10,9 @@
 	import { getNote } from '$lib/get-note';
 	import Cell from '$lib/Cell.svelte';
 	import Palette from '$lib/Palette.svelte';
-	import { instruments } from '$lib/instruments';
+	import { getInstruments } from '$lib/instruments';
+
+	const instruments = getInstruments();
 
 	let size = 12;
 	const colorId = writable(0);
