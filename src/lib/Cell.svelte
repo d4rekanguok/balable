@@ -6,14 +6,14 @@
 	export let colorId = 0;
 	export let data;
 
-	const { synth } = getContext('app');
+	const { instruments } = getContext('app');
 
 	const handleClick = () => {
 		data.update((store) => {
 			const value = (store.value + 1) % (maxValue + 1);
 
 			if (value > 0) {
-				synth.triggerAttackRelease(`${getNote(value)}4`, '8n');
+				instruments[colorId].triggerAttackRelease(`${getNote(value)}4`, '8n');
 			}
 
 			store.value = value;

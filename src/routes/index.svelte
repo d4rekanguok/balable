@@ -10,25 +10,13 @@
 	import { getNote } from '$lib/get-note';
 	import Cell from '$lib/Cell.svelte';
 	import Palette from '$lib/Palette.svelte';
+	import { instruments } from '$lib/instruments';
 
 	let size = 12;
 	const colorId = writable(0);
 	const data = Array.from({ length: size }, () => writable({ value: 0, colorId: 0 }));
 
-	const synth = new Tone.Synth().toDestination();
-
-	const wah = new Tone.AutoWah(50, 6, -30).toDestination();
-	wah.Q.value = 6;
-	const wahSynth = new Tone.Synth().connect(wah);
-	const instruments = [
-		synth,
-		wahSynth,
-		new Tone.AMSynth().toDestination(),
-		new Tone.MembraneSynth().toDestination(),
-		new Tone.FMSynth().toDestination()
-	];
-
-	setContext('app', { synth });
+	setContext('app', { instruments });
 
 	const noteSeries = derived([...data], (items) => {
 		return items.map((item) => {
