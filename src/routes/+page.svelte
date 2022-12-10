@@ -1,7 +1,3 @@
-<script context="module">
-	export const ssr = false;
-</script>
-
 <script>
 	import { writable, derived } from 'svelte/store';
 	import { setContext } from 'svelte';
@@ -14,20 +10,21 @@
 
 	const instruments = getInstruments();
 
-	let size = 12;
+	let size = 20;
 	let ref;
 	let isFullscreen = false;
 	let isPlaying = false;
 	let currentlyPlaying = -1;
+	let mode = 'advanced';
 
 	const colorId = writable(0);
 	const data = Array.from({ length: size }, () => writable({ value: 0, colorId: 0 }));
 
-	setContext('app', { instruments });
+	setContext('app', { instruments, mode });
 
 	const noteSeries = derived([...data], (items) => {
 		return items.map((item) => {
-			const note = getNote(item.value);
+			const note = getNote(item.value, mode);
 			const effectId = item.colorId;
 			return {
 				effectId,
@@ -116,14 +113,14 @@
 	}
 
 	.container {
-		width: 40vw;
-		height: 30vw;
+		width: 50vw;
+		height: 40vw;
 		margin: 0 auto;
 		max-width: 64rem;
 		min-width: 20rem;
 
 		display: grid;
-		grid: auto-flow / repeat(4, 1fr);
+		grid: auto-flow / repeat(5, 1fr);
 		grid-gap: 0.5rem;
 	}
 

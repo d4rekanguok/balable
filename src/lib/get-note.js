@@ -1,3 +1,5 @@
-export const getNote = (value = 0) => {
-  return ['C', 'D', 'E', 'F', 'G', 'A', 'B'][value - 1];
+import { notes } from '~/lib/constants';
+
+export const getNote = (value = 0, mode = 'simple') => {
+	return notes[mode][value - 1];
 };

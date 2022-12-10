@@ -3,7 +3,7 @@
 	import { spring } from 'svelte/motion';
 	import { colors } from './colors';
 	import { getNote } from './get-note';
-	export let maxValue = 7;
+	import { br_maps, notes } from './constants';
 	export let colorId = 0;
 	export let currentlyPlaying = false;
 	export let data;
@@ -35,15 +35,15 @@
 		pressed('playing');
 	}
 
-	const { instruments } = getContext('app');
+	const { instruments, mode } = getContext('app');
 
 	const handleClick = () => {
 		pressed('playing');
 		data.update((store) => {
-			const value = (store.value + 1) % (maxValue + 1);
+			const value = (store.value + 1) % (notes[mode].length + 1);
 
 			if (value > 0) {
-				instruments[colorId].play(`${getNote(value)}4`, '8n');
+				instruments[colorId].play(`${getNote(value, mode)}4`, '8n');
 			}
 
 			store.value = value;
@@ -53,18 +53,9 @@
 		});
 	};
 
-	const brMap = [
-		[0, 0, 0, 0],
-		[1, 0, 0, 0],
-		[0, 1, 0, 0],
-		[0, 0, 1, 0],
-		[0, 0, 0, 1],
-		[1, 0, 1, 0],
-		[0, 1, 0, 1],
-		[1, 1, 1, 1]
-	];
+	const br_map = br_maps[mode];
 
-	$: br = brMap[$data.value].map((v) => v * 50 + '%').join(' ');
+	$: br = br_map[$data.value].map((v) => v * 50 + '%').join(' ');
 	$: color = colors[$data.colorId];
 </script>
 
