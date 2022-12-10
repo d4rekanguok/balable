@@ -33,10 +33,6 @@
 		});
 	});
 
-	// little 'hack' to extract the derived value
-	// out of noteSeries without having to subscribe
-	$: notes = $noteSeries;
-
 	const handlePlay = () => {
 		const now = Tone.Transport.now();
 		const loopAnimate = new Tone.Loop((time) => {
@@ -45,10 +41,10 @@
 		}, 0.25).start(0);
 
 		const loop = new Tone.Loop((time) => {
-			notes.forEach(({ note, effectId }, i) => {
+			$noteSeries.forEach(({ note, effectId }, i) => {
 				instruments[effectId].play(note, 0.25, time + i * 0.25);
 			});
-		}, 0.25 * notes.length).start(0);
+		}, 0.25 * $noteSeries.length).start(0);
 		Tone.Transport.start();
 		isPlaying = true;
 
@@ -76,6 +72,10 @@
 			isFullscreen = true;
 		}
 	};
+
+	const handle_clear = () => {
+		data.forEach((note) => note.set({ value: 0, colorId: 0 }));
+	};
 </script>
 
 <svelte:head>
@@ -88,6 +88,7 @@
 	</div>
 	<div class="play-wrapper">
 		<button class="play" on:click={handlePlay} disabled={isPlaying}>⟳</button>
+		<button on:click={handle_clear}>Clear</button>
 	</div>
 	<div class="fullscreen-wrapper">
 		<button class="fullscreen" data-fullscreen={isFullscreen} on:click={handleFullscreen}>FS</button
